@@ -7,10 +7,13 @@
   "type": "commonjs",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "back": "npx nodemon server.js",
+    "front": "cd ../ionix-front && npm run dev",
+    "dev": "concurrently \"npm run back\" \"npm run front\" "
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "concurrently": "^10.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

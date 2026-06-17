@@ -21,7 +21,7 @@ const carSchema = new Schema({
   year: Number,
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   image: {
     type: String,

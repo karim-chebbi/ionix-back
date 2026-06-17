@@ -55,7 +55,7 @@ exports.register = async (req, res) => {
 
       return res
         .status(201)
-        .send({ message: "User registered successfully!", token: token, user: newUser });
+        .send({ success: [{ msg: "User registered successfully!" }], token: token, user: newUser });
     } catch (error) {
         return res.status(500).send({ errors : [{msg: "Error server register"}], error })
         
@@ -65,17 +65,41 @@ exports.register = async (req, res) => {
 // login auth controller
 exports.login = async (req, res) => {
     try {
-        const {email, password} = req.body;
-        const existingUser = await User.findOne({email});
-        if (!existingUser) {
-            return res.status(400).send({errors: [{msg: "User not found with this email"}]})
-        }
-        const hashedPassword = await bcrypt.compare(password, existingUser.password)
+      const { email, password } = req.body;
+      const existingUser = await User.findOne({ email });
+      if (!existingUser) {
+        return res
+          .status(400)
+          .send({ errors: [{ msg: "User not found with this email" }] });
+      }
+      const hashedPassword = await bcrypt.compare(
+        password,
+        existingUser.password
+      );
 
-        if (!hashedPassword) {
-            return res.status(400).send({errors: [{msg: "Incorrect password"}]})
-        }
-        return res.status(200).send({success: [{msg: "User logged in successfully!"}], user: existingUser})
+      if (!hashedPassword) {
+        return res
+          .status(400)
+          .send({ errors: [{ msg: "Incorrect password" }] });
+      }
+      // Generate JWT token
+      const token = jwt.sign(
+        {
+          id: existingUser._id,
+          firstName: existingUser.firstName,
+          lastName: existingUser.lastName,
+          email: existingUser.email,
+        },
+        process.env.SECRET_KEY,
+        { expiresIn: "7d" }
+      );
+      return res
+        .status(200)
+        .send({
+          success: [{ msg: "User logged in successfully!" }],
+          token: token,
+          user: existingUser,
+        });
     } catch (error) {
         return res
           .status(500)
