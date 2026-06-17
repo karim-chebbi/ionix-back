@@ -1,14 +1,21 @@
 // require express
 const express = require("express")
 
+// require cors
+const cors = require("cors")
+
 // create an instance of express
 const app = express()
 
 // body parser middleware
 app.use(express.json())
 
+app.use(cors())
+
 // require dotenv
 require("dotenv").config()
+
+
 
 // require PORT
 const PORT = process.env.PORT
@@ -31,3 +38,6 @@ connectDB()
 
 // require car routes
 app.use("/api/cars", require("./routes/carRoutes"))
+
+// require auth routes
+app.use("/api/auth", require("./routes/authRoutes"))
